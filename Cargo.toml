@@ -1,0 +1,8 @@
+[package]
+name = "rust-movies"
+version = "0.1.0"
+authors = ["Valeriy Kostikov <mkoctuk@gmail.com>"]
+
+[dependencies]
+postgres = "0.15"
+time = "0.1"
