@@ -1,6 +1,6 @@
-extern crate time;
+extern crate chrono;
 
-use self::time::Timespec;
+use self::chrono::NaiveDateTime;
 
 #[derive (Debug)]
 pub struct Movie {
@@ -24,8 +24,8 @@ pub struct Movie {
     pub imdb: Option<f64>,
     pub poster: Option<String>,
     pub poster_url: Option<String>,
-    pub created_at: Option<Timespec>,
-    pub updated_at: Option<Timespec>,
+    pub created_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
     pub torrents: Option<Vec<Torrent>>,
 	pub nnm: Option<f32>,
 }
@@ -51,8 +51,8 @@ pub struct Torrent {
   pub size: Option<i32>,
   pub seeders: Option<i32>,
   pub leechers: Option<i32>,
-  pub created_at: Option<Timespec>,
-  pub updated_at: Option<Timespec>,
+  pub created_at: Option<NaiveDateTime>,
+  pub updated_at: Option<NaiveDateTime>,
 }
 
 impl Movie {

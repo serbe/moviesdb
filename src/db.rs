@@ -2,8 +2,7 @@ extern crate postgres;
 
 use postgres::{Connection};
 use types::{Torrent, Movie};
-
-// use types;
+// use postgres::types::{FromSql, ToSql};
 
 pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
     let limit: i64 = 100;
@@ -47,8 +46,8 @@ pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
         movie.imdb = row.get("imdb");
         movie.poster = row.get("poster");
         movie.poster_url = row.get("poster_url");
-        // movie.created_at = row.get("created_at");
-        // movie.updated_at = row.get("updated_at");
+        movie.created_at = row.get("created_at");
+        movie.updated_at = row.get("updated_at");
         movie.torrents = get_torrents(conn, movie.id);
         // movie.nnm = match movie.torrents {
         //     None => None,
