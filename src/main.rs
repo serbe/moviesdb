@@ -10,7 +10,7 @@ fn main() {
     let conn = Connection::connect("postgres://movuser:movpass@localhost:5432/movies", TlsMode::None).unwrap();
     // println!("{:?}", conn);
 
-    let movies = get_movies(conn, 1);
+    let movies = get_movies(&conn, 1);
 
     println!("{:?}", movies);
 
