@@ -27,7 +27,7 @@ pub struct Movie {
     pub created_at: Option<Timespec>,
     pub updated_at: Option<Timespec>,
     pub torrents: Option<Vec<Torrent>>,
-	pub nnm: Option<f64>,
+	pub nnm: Option<f32>,
 }
 
 #[derive(Debug)]
@@ -38,7 +38,7 @@ pub struct Torrent {
   pub href: Option<String>,
   pub torrent: Option<String>,
   pub magnet: Option<String>,
-  pub nnm: Option<f64>,
+  pub nnm: Option<f32>,
   pub subtitles_type: Option<String>,
   pub subtitles: Option<String>,
   pub video: Option<String>,
@@ -48,9 +48,9 @@ pub struct Torrent {
   pub audio2: Option<String>,
   pub audio3: Option<String>,
   pub translation: Option<String>,
-  pub size: Option<i64>,
-  pub seeders: Option<i64>,
-  pub leechers: Option<i64>,
+  pub size: Option<i32>,
+  pub seeders: Option<i32>,
+  pub leechers: Option<i32>,
   pub created_at: Option<Timespec>,
   pub updated_at: Option<Timespec>,
 }
