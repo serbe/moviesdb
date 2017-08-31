@@ -1,8 +1,19 @@
-extern crate postgres;
+use postgres::{Connection, Error, TlsMode};
+use models::{Torrent, Movie};
 
-use postgres::{Connection};
-use types::{Torrent, Movie};
-// use postgres::types::{FromSql, ToSql};
+pub fn db_conn() -> Result<Connection, Error> {
+    Connection::connect("postgres://movuser:movpass@localhost:5432/movies", TlsMode::None)
+}
+
+pub fn mean_nnm(v: Vec<f32>) -> Option<f32> {
+    let n = v.iter().filter(|&i| *i != 0.0).map(|&i| i).collect::<Vec<f32>>();
+    let k: f32 = n.iter().sum();
+    if k == 0. || n.len() == 0 {
+        None
+    } else {
+        Some(k / n.len() as f32)
+    }
+}
 
 pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
     let limit: i64 = 100;
@@ -49,10 +60,11 @@ pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
         movie.created_at = row.get("created_at");
         movie.updated_at = row.get("updated_at");
         movie.torrents = get_torrents(conn, movie.id);
-        // movie.nnm = match movie.torrents {
-        //     None => None,
-        //     Some(ref val) => val.
-        // };
+        movie.nnm = match movie.torrents {
+            None => None,
+            Some(ref val) => mean_nnm(val.iter().filter(|i| i.nnm.is_some()).map(|i| i.nnm.unwrap()).collect::<Vec<f32>>())
+        };
+        println!("{:?}", movie.nnm);
         movies.push(movie);
     }
     if movies.len() > 0 {
@@ -93,8 +105,8 @@ pub fn get_torrents(conn: &Connection, movie_id: i64) -> Option<Vec<Torrent>> {
         torrent.size = row.get("size");
         torrent.seeders = row.get("seeders");
         torrent.leechers = row.get("leechers");
-        // torrent.created_at = row.get("created_at");
-        // torrent.updated_at = row.get("updated_at");
+        torrent.created_at = row.get("created_at");
+        torrent.updated_at = row.get("updated_at");
 
         torrents.push(torrent);
     }
