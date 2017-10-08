@@ -2,7 +2,7 @@ extern crate chrono;
 
 use self::chrono::NaiveDateTime;
 
-#[derive (Debug)]
+#[derive(Debug)]
 pub struct Movie {
     pub id: i64,
     pub section: Option<String>,
@@ -27,32 +27,32 @@ pub struct Movie {
     pub created_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,
     pub torrents: Option<Vec<Torrent>>,
-	pub nnm: Option<f32>,
+    pub nnm: Option<f32>,
 }
 
 #[derive(Debug)]
 pub struct Torrent {
-  pub id: i64,
-  pub movie_id: i64,
-  pub date_create: Option<String>,
-  pub href: Option<String>,
-  pub torrent: Option<String>,
-  pub magnet: Option<String>,
-  pub nnm: Option<f32>,
-  pub subtitles_type: Option<String>,
-  pub subtitles: Option<String>,
-  pub video: Option<String>,
-  pub quality: Option<String>,
-  pub resolution: Option<String>,
-  pub audio1: Option<String>,
-  pub audio2: Option<String>,
-  pub audio3: Option<String>,
-  pub translation: Option<String>,
-  pub size: Option<i32>,
-  pub seeders: Option<i32>,
-  pub leechers: Option<i32>,
-  pub created_at: Option<NaiveDateTime>,
-  pub updated_at: Option<NaiveDateTime>,
+    pub id: i64,
+    pub movie_id: i64,
+    pub date_create: Option<String>,
+    pub href: Option<String>,
+    pub torrent: Option<String>,
+    pub magnet: Option<String>,
+    pub nnm: Option<f32>,
+    pub subtitles_type: Option<String>,
+    pub subtitles: Option<String>,
+    pub video: Option<String>,
+    pub quality: Option<String>,
+    pub resolution: Option<String>,
+    pub audio1: Option<String>,
+    pub audio2: Option<String>,
+    pub audio3: Option<String>,
+    pub translation: Option<String>,
+    pub size: Option<i32>,
+    pub seeders: Option<i32>,
+    pub leechers: Option<i32>,
+    pub created_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
 }
 
 impl Movie {

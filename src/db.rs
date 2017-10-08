@@ -1,43 +1,57 @@
-use postgres::{Connection, Error, TlsMode};
+use postgres::{Connection, TlsMode};
 use models::{Torrent, Movie};
 
-pub fn db_conn() -> Result<Connection, Error> {
+pub fn db_conn() -> Connection {
     Connection::connect("postgres://movuser:movpass@localhost:5432/movies", TlsMode::None)
+    .expect(&format!("Error connection to database."))
 }
 
-pub fn mean_nnm(v: Vec<f32>) -> Option<f32> {
-    let n = v.iter().filter(|&i| *i != 0.0).map(|&i| i).collect::<Vec<f32>>();
-    let k: f32 = n.iter().sum();
-    if k == 0. || n.len() == 0 {
-        None
-    } else {
-        Some(k / n.len() as f32)
+pub fn mean_nnm(v: &Option<Vec<Torrent>>) -> Option<f32> {
+    match *v {
+        None => return None,
+        Some(ref val) => {
+            let n: Vec<f32> = val.iter().filter(|i| {
+                i.nnm.is_some()
+            }).map(|i| {
+                i.nnm.unwrap()
+            }).collect::<Vec<f32>>().iter().filter(|&i| {
+                *i != 0.0
+            }).map(|&i| {
+                i
+            }).collect::<Vec<f32>>();
+            let k: f32 = n.iter().sum();
+            if k == 0. || n.len() == 0 {
+                None
+            } else {
+                Some(k / n.len() as f32)
+            }
+        }
     }
 }
 
 pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
     let limit: i64 = 100;
-    let offset = (page-1)*limit;
-    let mut movies = Vec::new();
-    let query_str = "
-            SELECT
-                *
-            FROM
-                movies
-            WHERE
-                id IN (
-                    SELECT
-                        t.movie_id
-                    FROM
-                        torrents AS t
-                    GROUP BY movie_id
-                    ORDER BY max(id) desc
-                    LIMIT $1
-                    OFFSET $2
-                )
-            ;";
+    let offset: i64 = (page-1)*limit;
+    let mut movies: Vec<Movie> = Vec::new();
+    let query_str: &str = "
+        SELECT
+            *
+        FROM
+            movies
+        WHERE
+            id IN (
+                SELECT
+                    t.movie_id
+                FROM
+                    torrents AS t
+                GROUP BY movie_id
+                ORDER BY max(id) desc
+                LIMIT $1
+                OFFSET $2
+            )
+    ;";
     for row in &conn.query(query_str, &[&limit, &offset]).unwrap() {
-        let mut movie = Movie::new();
+        let mut movie: Movie = Movie::new();
         movie.id = row.get("id");
         movie.section = row.get("section");
         movie.name = row.get("name");
@@ -60,11 +74,8 @@ pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
         movie.created_at = row.get("created_at");
         movie.updated_at = row.get("updated_at");
         movie.torrents = get_torrents(conn, movie.id);
-        movie.nnm = match movie.torrents {
-            None => None,
-            Some(ref val) => mean_nnm(val.iter().filter(|i| i.nnm.is_some()).map(|i| i.nnm.unwrap()).collect::<Vec<f32>>())
-        };
-        println!("{:?}", movie.nnm);
+        movie.nnm = mean_nnm(&movie.torrents);
+//        println!("{:?}", movie.nnm);
         movies.push(movie);
     }
     if movies.len() > 0 {
@@ -75,14 +86,14 @@ pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
 }
 
 pub fn get_torrents(conn: &Connection, movie_id: i64) -> Option<Vec<Torrent>> {
-    let query_str = "
+    let query_str: &str = "
         SELECT
             *
         FROM
             torrents
         WHERE
             movie_id = $1
-        ;";
+    ;";
     let mut torrents = Vec::new();
     for row in &conn.query(query_str, &[&movie_id]).unwrap() {
         let mut torrent = Torrent::new();
