@@ -9,8 +9,10 @@ chrono = "0.4"
 # iron = "0.5.*"
 # lazy_static = "0.2"
 # postgres-shared = "0.4.0"
+clippy = {version = "*", optional = true}
 
 [features]
+default = []
 # with-bit-vec = ["postgres-shared/with-bit-vec"]
 # with-chrono = ["postgres-shared/with-chrono"]
 # with-eui48 = ["postgres-shared/with-eui48"]
