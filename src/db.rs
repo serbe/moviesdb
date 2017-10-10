@@ -3,24 +3,20 @@ use models::{Torrent, Movie};
 
 pub fn db_conn() -> Connection {
     Connection::connect("postgres://movuser:movpass@localhost:5432/movies", TlsMode::None)
-    .expect(&format!("Error connection to database."))
+    .expect(&format!("{}", "Error connection to database."))
 }
 
 pub fn mean_nnm(v: &Option<Vec<Torrent>>) -> Option<f32> {
     match *v {
-        None => return None,
+        None => None,
         Some(ref val) => {
-            let n: Vec<f32> = val.iter().filter(|i| {
-                i.nnm.is_some()
-            }).map(|i| {
-                i.nnm.unwrap()
-            }).collect::<Vec<f32>>().iter().filter(|&i| {
+            let n: Vec<f32> = val.iter().map(|i| {
+                i.nnm.unwrap_or(0.0)
+            }).filter(|i| {
                 *i != 0.0
-            }).map(|&i| {
-                i
             }).collect::<Vec<f32>>();
             let k: f32 = n.iter().sum();
-            if k == 0. || n.len() == 0 {
+            if k == 0. || n.is_empty() {
                 None
             } else {
                 Some(k / n.len() as f32)
@@ -75,10 +71,10 @@ pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
         movie.updated_at = row.get("updated_at");
         movie.torrents = get_torrents(conn, movie.id);
         movie.nnm = mean_nnm(&movie.torrents);
-//        println!("{:?}", movie.nnm);
+//        println!("{:?} {:?}", movie.nnm, movie.name);
         movies.push(movie);
     }
-    if movies.len() > 0 {
+    if !movies.is_empty() {
         Ok(movies)
     } else {
         Err("test".to_string())
@@ -121,7 +117,7 @@ pub fn get_torrents(conn: &Connection, movie_id: i64) -> Option<Vec<Torrent>> {
 
         torrents.push(torrent);
     }
-    if torrents.len() > 0 {
+    if !torrents.is_empty() {
         Some(torrents)
     } else {
         None
