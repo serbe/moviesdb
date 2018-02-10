@@ -3,7 +3,7 @@ use models::{Torrent, Movie};
 
 pub fn db_conn() -> Connection {
     Connection::connect("postgres://movuser:movpass@localhost:5432/movies", TlsMode::None)
-    .expect(&format!("{}", "Error connection to database."))
+    .expect("Error connection to database.")
 }
 
 pub fn mean_nnm(v: &Option<Vec<Torrent>>) -> Option<f32> {
@@ -71,7 +71,6 @@ pub fn get_movies(conn: &Connection, page: i64) -> Result<Vec<Movie>, String> {
         movie.updated_at = row.get("updated_at");
         movie.torrents = get_torrents(conn, movie.id);
         movie.nnm = mean_nnm(&movie.torrents);
-//        println!("{:?} {:?}", movie.nnm, movie.name);
         movies.push(movie);
     }
     if !movies.is_empty() {

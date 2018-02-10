@@ -1,6 +1,6 @@
-#![cfg_attr(feature="clippy", feature(plugin))]
-
-#![cfg_attr(feature="clippy", plugin(clippy))]
+//#![cfg_attr(feature="clippy", feature(plugin))]
+//
+//#![cfg_attr(feature="clippy", plugin(clippy))]
 
 extern crate postgres;
 // extern crate iron;
