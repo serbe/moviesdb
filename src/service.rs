@@ -13,6 +13,7 @@ use types::*;
 
 const MOVIES: &'static str = "/api/movies";
 const TORRENTS: &'static str = "/api/torrents";
+// const OTHER: &'static str = "/api/test";
 // const RECEIPT: &'static str = "/api/receipt";
 // const CUSTOMER: &'static str = "/api/customer";
 // const PURCHASE: &'static str = "/api/purchase";
@@ -72,7 +73,10 @@ impl Service for Api {
                     // PURCHASE => self.db.join_purchase(),
                     // RECEIPT => self.db.join_receipt(),
                     // STAFF => self.db.join_staff(),
-                    _ => Err(Error::NotFound)
+                    _ => {
+                        println!("{:?} {:?} {:?}", method, uri, uri.query());
+                        Err(Error::NotFound)
+                    }
                 })
                     .and_then(|s| Ok(Response::new().with_body(s)))
                     .or_else(Api::error_res)
