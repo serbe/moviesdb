@@ -1,6 +1,9 @@
+use postgres::Connection;
 use postgres::rows::Row;
 use chrono::NaiveDateTime;
 
+use db::Query;
+use error::Error;
 use types::Torrent;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -113,6 +116,21 @@ impl Movie {
             None,
             None,
         )
+    }
+}
+
+impl Query for Movie {
+    fn get_all(conn: &Connection) -> Result<Vec<Self>, Error> {
+        let mut vec = Vec::new();
+            for row in &conn.query("SELECT * FROM movies", &[])? {
+            vec.push(Movie::from_row(row));
+        }
+        Ok(vec)
+    }
+
+    fn get_by_id(conn: &Connection, id: i64) -> Result<Self, Error> {
+        let rows = &conn.query("SELECT * FROM movies WHERE id = $1", &[&id])?;
+        Ok(Movie::from_row(rows.get(0)))
     }
 }
 

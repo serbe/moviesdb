@@ -1,7 +1,7 @@
 extern crate hyper;
 extern crate futures;
 
-use hyper::{Get, Post, Delete, Put, StatusCode, Body, Headers};
+use hyper::{Get, StatusCode, Body, Headers};
 use futures::{future, Future, Stream};
 use hyper::header::ContentLength;
 use std::rc::Rc;
@@ -16,7 +16,7 @@ const TORRENTS: &'static str = "/api/torrents";
 // const RECEIPT: &'static str = "/api/receipt";
 // const CUSTOMER: &'static str = "/api/customer";
 // const PURCHASE: &'static str = "/api/purchase";
-const LOGIN: &'static str = "/api/login";
+// const LOGIN: &'static str = "/api/login";
 
 pub struct Api {
   db: Rc<Database>
@@ -61,12 +61,13 @@ impl Service for Api {
     type Future = Box<Future<Item=Self::Response, Error=Self::Error>>;
 
     fn call(&self, req: Request) -> Self::Future {
-        let db = Rc::clone(&self.db);
-        let (method, uri, _, headers, body) = req.deconstruct();
+        let _db = Rc::clone(&self.db);
+        let (method, uri, _http_version, _headers, _body) = req.deconstruct();
         match method {
             Get => Box::new(
                 future::done(match uri.path() {
                     MOVIES => self.db.get_all::<Movie>(),
+                    TORRENTS => self.db.get_all::<Torrent>(),
                     // CUSTOMER => self.db.get_all::<Customer>(),
                     // PURCHASE => self.db.join_purchase(),
                     // RECEIPT => self.db.join_receipt(),

@@ -1,7 +1,9 @@
 use postgres::{Connection, TlsMode};
+use serde::Serialize;
+use serde_json::to_string;
 
 use error::Error;
-use types::*;
+// use types::*;
 
 pub struct Database {
   conn: Connection
@@ -23,7 +25,7 @@ impl Database {
 
 pub trait Query where Self: Sized + Serialize {
 //   fn create(conn: &Connection, obj: Self) -> Result<(), Error>;
-//   fn get_by_id(conn: &Connection, id: i32) -> Result<Self, Error>;
+  fn get_by_id(conn: &Connection, id: i64) -> Result<Self, Error>;
   fn get_all(conn: &Connection) -> Result<Vec<Self>, Error>;
 //   fn update(conn: &Connection, obj: Self) -> Result<(), Error>;
 //   fn delete_by_id(conn: &Connection, id: i32) -> Result<(), Error>;

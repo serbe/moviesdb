@@ -11,9 +11,9 @@ pub enum Error {
 }
 
 impl Error {
-  pub fn from_serde(err: SerdeError) -> Error {
-    Error::Serde(err)
-  }
+  // pub fn from_serde(err: SerdeError) -> Error {
+  //   Error::Serde(err)
+  // }
 
   // return the error message in json format
   pub fn json(self) -> String {

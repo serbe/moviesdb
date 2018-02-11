@@ -9,10 +9,10 @@ extern crate serde;
 extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
+// #[macro_use]
 extern crate postgres;
-#[macro_use]
-extern crate postgres_derive;
+// #[macro_use]
+// extern crate postgres_derive;
 
 mod db;
 mod service;

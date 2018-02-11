@@ -1,6 +1,9 @@
-extern crate chrono;
+use postgres::Connection;
+use postgres::rows::Row;
+use chrono::NaiveDateTime;
 
-use self::chrono::NaiveDateTime;
+use db::Query;
+use error::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Torrent {
@@ -28,30 +31,93 @@ pub struct Torrent {
 }
 
 impl Torrent {
-    pub fn new() -> Self {
+    pub fn new(
+        id: i64,
+        movie_id: i64,
+        date_create: Option<String>,
+        href: Option<String>,
+        torrent: Option<String>,
+        magnet: Option<String>,
+        nnm: Option<f32>,
+        subtitles_type: Option<String>,
+        subtitles: Option<String>,
+        video: Option<String>,
+        quality: Option<String>,
+        resolution: Option<String>,
+        audio1: Option<String>,
+        audio2: Option<String>,
+        audio3: Option<String>,
+        translation: Option<String>,
+        size: Option<i32>,
+        seeders: Option<i32>,
+        leechers: Option<i32>,
+        created_at: Option<NaiveDateTime>,
+        updated_at: Option<NaiveDateTime>,
+    ) -> Torrent {
         Torrent {
-            id: 0,
-            movie_id: 0,
-            date_create: None,
-            href: None,
-            torrent: None,
-            magnet: None,
-            nnm: None,
-            subtitles_type: None,
-            subtitles: None,
-            video: None,
-            quality: None,
-            resolution: None,
-            audio1: None,
-            audio2: None,
-            audio3: None,
-            translation: None,
-            size: None,
-            seeders: None,
-            leechers: None,
-            created_at: None,
-            updated_at: None,
+            id,
+            movie_id,
+            date_create,
+            href,
+            torrent,
+            magnet,
+            nnm,
+            subtitles_type,
+            subtitles,
+            video,
+            quality,
+            resolution,
+            audio1,
+            audio2,
+            audio3,
+            translation,
+            size,
+            seeders,
+            leechers,
+            created_at,
+            updated_at,
         }
+    }
+
+    fn from_row(row: Row) -> Torrent {
+        Torrent::new(
+            row.get("id"),
+            row.get("movie_id"),
+            row.get("date_create"),
+            row.get("href"),
+            row.get("torrent"),
+            row.get("magnet"),
+            row.get("nnm"),
+            row.get("subtitles_type"),
+            row.get("subtitles"),
+            row.get("video"),
+            row.get("quality"),
+            row.get("resolution"),
+            row.get("audio1"),
+            row.get("audio2"),
+            row.get("audio3"),
+            row.get("translation"),
+            row.get("size"),
+            row.get("seeders"),
+            row.get("leechers"),
+            row.get("created_at"),
+            row.get("updated_at"),
+        )
+    }
+}
+
+impl Query for Torrent {
+    fn get_all(conn: &Connection) -> Result<Vec<Self>, Error> {
+        let mut vec = Vec::new();
+            for row in &conn.query("SELECT * FROM torrents", &[])? {
+            vec.push(Torrent::from_row(row));
+        }
+        Ok(vec)
+    }
+
+    fn get_by_id(conn: &Connection, id: i64) -> Result<Self, Error> {
+        let rows = &conn.query("SELECT * FROM torrents WHERE id = $1", &[&id])?;
+        Ok(Torrent::from_row(rows.get(0)))
     }
 }
 
