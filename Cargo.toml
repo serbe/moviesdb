@@ -6,10 +6,11 @@ authors = ["Valeriy Kostikov <mkoctuk@gmail.com>"]
 [dependencies]
 postgres = { version = "0.15.1", features = ["with-chrono"] }
 chrono = "0.4"
-# iron = "0.5.*"
+futures = "0.1"
+hyper = "0.11"
 # lazy_static = "0.2"
 # postgres-shared = "0.4.0"
-#clippy = {version = "*", optional = true}
+# clippy = {version = "*", optional = true}
 
 [features]
 default = []
