@@ -2,19 +2,28 @@
 //
 //#![cfg_attr(feature="clippy", plugin(clippy))]
 
-extern crate postgres;
+extern crate chrono;
 extern crate hyper;
 extern crate futures;
+extern crate serde;
+extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate postgres;
+#[macro_use]
+extern crate postgres_derive;
 
-//use std::sync::{Arc, Mutex};
-
-// use db::{get_movies, db_conn};
-use hyper::server::{Http};
-use services::{HelloWorld};
-
-mod models;
 mod db;
-mod services;
+mod service;
+mod types;
+mod error;
+
+use std::rc::Rc;
+use hyper::server::Http;
+
+use service::Api;
+use db::Database;
 
 fn main() {
     // let conn = db_conn();
@@ -29,8 +38,10 @@ fn main() {
     // }).http("localhost:3000").unwrap();
 
     // println!("{:?}", movies.unwrap().len());
-
-    let addr = "127.0.0.1:3000".parse().unwrap();
-    let server = Http::new().bind(&addr, || Ok(HelloWorld)).unwrap();
+    let addr = "0.0.0.0:3000".parse().unwrap();
+    let server = Http::new().bind(&addr, || {
+        let db = Rc::new(Database::new());
+        Ok(Api::new(db))
+    }).unwrap();
     server.run().unwrap();
 }
