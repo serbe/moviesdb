@@ -89,7 +89,7 @@ impl Movie {
         }
     }
 
-    fn from_row(row: Row) -> Movie {
+    fn from_row(row: &Row) -> Movie {
         Movie::new(
             row.get("id"),
             row.get("section"),
@@ -123,14 +123,14 @@ impl Query for Movie {
     fn get_all(conn: &Connection) -> Result<Vec<Self>, Error> {
         let mut vec = Vec::new();
             for row in &conn.query("SELECT * FROM movies", &[])? {
-            vec.push(Movie::from_row(row));
+            vec.push(Movie::from_row(&row));
         }
         Ok(vec)
     }
 
     fn get_by_id(conn: &Connection, id: i64) -> Result<Self, Error> {
         let rows = &conn.query("SELECT * FROM movies WHERE id = $1", &[&id])?;
-        Ok(Movie::from_row(rows.get(0)))
+        Ok(Movie::from_row(&rows.get(0)))
     }
 }
 

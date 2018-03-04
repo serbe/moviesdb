@@ -11,8 +11,8 @@ use db::Database;
 use error::Error;
 use types::*;
 
-const MOVIES: &'static str = "/api/movies";
-const TORRENTS: &'static str = "/api/torrents";
+const MOVIES: &str = "/api/movies";
+const TORRENTS: &str = "/api/torrents";
 // const OTHER: &'static str = "/api/test";
 // const RECEIPT: &'static str = "/api/receipt";
 // const CUSTOMER: &'static str = "/api/customer";
@@ -28,7 +28,7 @@ impl Api {
         Api { db }
     }
 
-    fn get_body(body: Body, headers: Headers) -> Box<Future<Item=Vec<u8>, Error=Error>> {
+    fn get_body(body: Body, headers: &Headers) -> Box<Future<Item=Vec<u8>, Error=Error>> {
         let vec;
         if let Some(len) = headers.get::<ContentLength>() {
             vec = Vec::with_capacity(**len as usize);

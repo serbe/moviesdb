@@ -79,7 +79,7 @@ impl Torrent {
         }
     }
 
-    fn from_row(row: Row) -> Torrent {
+    fn from_row(row: &Row) -> Torrent {
         Torrent::new(
             row.get("id"),
             row.get("movie_id"),
@@ -110,14 +110,14 @@ impl Query for Torrent {
     fn get_all(conn: &Connection) -> Result<Vec<Self>, Error> {
         let mut vec = Vec::new();
             for row in &conn.query("SELECT * FROM torrents", &[])? {
-            vec.push(Torrent::from_row(row));
+            vec.push(Torrent::from_row(&row));
         }
         Ok(vec)
     }
 
     fn get_by_id(conn: &Connection, id: i64) -> Result<Self, Error> {
         let rows = &conn.query("SELECT * FROM torrents WHERE id = $1", &[&id])?;
-        Ok(Torrent::from_row(rows.get(0)))
+        Ok(Torrent::from_row(&rows.get(0)))
     }
 }
 
